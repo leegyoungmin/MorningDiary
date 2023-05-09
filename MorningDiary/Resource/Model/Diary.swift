@@ -4,17 +4,58 @@
 //
 //  Copyright (c) 2023 Minii All rights reserved.
 
-struct Diary {
+import Foundation
+
+struct Diary: Identifiable, Hashable {
+  let id = UUID()
+  let createdDate: Date
+  let contents: [DiaryContent]
+}
+
+struct DiaryContent: Identifiable, Hashable {
+  let id = UUID()
   let title: String
-  let description: String
+  let body: String
   let images: [String]
 }
 
 extension Diary {
   static let mockDiary: [Diary] = [
-    .init(title: "이것은 1번 예시입니다.", description: "이것은 1번 예시이고, 이것은 본문입니다.", images: []),
-    .init(title: "이것은 2번 예시입니다.", description: "이것은 2번 예시이고, 이것은 본문입니다.", images: []),
-    .init(title: "이것은 3번 예시입니다.", description: "이것은 3번 예시이고, 이것은 본문입니다.", images: []),
-    .init(title: "이것은 4번 예시입니다.", description: "이것은 4번 예시이고, 이것은 본문입니다.", images: [])
+    .init(
+      createdDate: Date().addingTimeInterval(-100000000),
+      contents: [
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+      ]
+    ),
+    .init(
+      createdDate: Date(),
+      contents: [
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+      ]
+    ),
+    .init(
+      createdDate: Date().addingTimeInterval(100000000),
+      contents: [
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+        .init(title: "Example1", body: "Example", images: []),
+      ]
+    ),
   ]
 }
