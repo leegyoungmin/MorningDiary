@@ -3,15 +3,16 @@
 //  MorningDiary
 //
 //  Copyright (c) 2023 Minii All rights reserved.
-        
+
 
 import SwiftUI
 
 @main
 struct MorningDiaryApp: App {
-    var body: some Scene {
-        WindowGroup {
-            DiaryBoardView()
-        }
+  var body: some Scene {
+    WindowGroup {
+      DiaryBoardView()
+        .environment(\.backgroundColor, Color(uiColor: .secondarySystemBackground))
     }
+  }
 }
