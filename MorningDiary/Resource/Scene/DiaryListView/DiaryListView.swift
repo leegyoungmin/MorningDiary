@@ -9,6 +9,7 @@ import SwiftUI
 struct DiaryListView: View {
   @Environment(\.backgroundColor) var backgroundColor
   @Binding var selectedContent: DiaryContent?
+  @State var toggleState: ToggleState = .unSelected
   @State var state: SwipeState = .untouched
   let diaries: [Diary]
   
@@ -20,7 +21,7 @@ struct DiaryListView: View {
             .padding(.horizontal)
           
           ForEach(diary.contents) { content in
-            DiaryListCell(state: $state, content: content)
+            DiaryListCell(toggleState: $toggleState, state: $state, content: content)
           }
         }
         .padding(.top)
@@ -40,8 +41,10 @@ private extension DiaryListView {
   
   struct DiaryListCell: View {
     @Environment(\.backgroundColor) var backgroundColor
+    @Binding var toggleState: ToggleState
     @Binding var state: SwipeState
     let content: DiaryContent
+    let id = UUID()
     
     var body: some View {
       HStack {
@@ -54,7 +57,7 @@ private extension DiaryListView {
         Spacer()
       }
       .padding()
-      .background(Color.white)
+      .addToggleAction(state: $toggleState)
       .cornerRadius(12)
       .padding(.horizontal)
       .addSwipeAction(
