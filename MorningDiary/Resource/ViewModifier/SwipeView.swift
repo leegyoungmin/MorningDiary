@@ -26,8 +26,8 @@ struct SwipeView<LeadingContent: View, TrailingContent: View>: ViewModifier {
   @Binding private var state: SwipeState
   @State var visibleButton: VisibleButton = .none
   
-  @State private var maxLeadingOffset: CGFloat = .zero
-  @State private var minTrailingOffset: CGFloat = .zero
+  @State private var maxLeadingOffset: CGFloat
+  @State private var minTrailingOffset: CGFloat
   @State private var oldOffset: CGFloat = .zero
   
   let backgroundColor: Color
@@ -45,6 +45,9 @@ struct SwipeView<LeadingContent: View, TrailingContent: View>: ViewModifier {
     self._state = state
     self.leadingView = swipeItemsView().value.0
     self.trailingView = swipeItemsView().value.1
+    
+    self._maxLeadingOffset = State(initialValue: 90)
+    self._minTrailingOffset = State(initialValue: -90)
   }
   
   init(
@@ -56,7 +59,9 @@ struct SwipeView<LeadingContent: View, TrailingContent: View>: ViewModifier {
     self._state = state
     self.leadingView = nil
     self.trailingView = Group { trailingView() }
-    self.minTrailingOffset = -90
+    
+    self._minTrailingOffset = State(initialValue: -90)
+    self._maxLeadingOffset = State(initialValue: .zero)
   }
   
   init(
@@ -68,7 +73,9 @@ struct SwipeView<LeadingContent: View, TrailingContent: View>: ViewModifier {
     self._state = state
     self.leadingView = Group { leadingView() }
     self.trailingView = nil
-    self.maxLeadingOffset = 90
+    
+    self._maxLeadingOffset = State(initialValue: 90)
+    self._minTrailingOffset = State(initialValue: .zero)
   }
   
   func reset() {
@@ -89,7 +96,7 @@ struct SwipeView<LeadingContent: View, TrailingContent: View>: ViewModifier {
           }
           .onChanged { value in
             let totalSlide = value.translation.width + oldOffset
-            
+                        
             if ((0...Int(maxLeadingOffset)) ~= Int(totalSlide)) || ((Int(minTrailingOffset)...0) ~= Int(totalSlide)) {
               withAnimation {
                 offsetX = totalSlide
