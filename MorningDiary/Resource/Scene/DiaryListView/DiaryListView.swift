@@ -16,7 +16,7 @@ struct DiaryListView: View {
     ScrollView {
       ForEach(diaries) { diary in
         VStack(alignment: .leading) {
-          Text(diary.createdDate.description)
+          Text(diary.dateDescription)
             .padding(.horizontal)
           
           ForEach(diary.contents) { content in
