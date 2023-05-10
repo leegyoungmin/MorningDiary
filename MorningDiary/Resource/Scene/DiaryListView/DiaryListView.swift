@@ -7,40 +7,70 @@
 import SwiftUI
 
 struct DiaryListView: View {
+  @Environment(\.backgroundColor) var backgroundColor
+  @Binding var selectedContent: DiaryContent?
+  @State var state: SwipeState = .untouched
   let diaries: [Diary]
+  
   var body: some View {
-    ScrollView(.vertical, showsIndicators: false) {
-      ForEach(diaries, id: \.id) { diary in
+    ScrollView {
+      ForEach(diaries) { diary in
         VStack(alignment: .leading) {
           Text(diary.createdDate.description)
+            .padding(.horizontal)
           
-          ForEach(diary.contents, id: \.id) { content in
-            HStack {
-              VStack(alignment: .leading) {
-                Text(content.title)
-                Text(content.body)
-              }
-              
-              Spacer()
-            }
-            .padding()
-            .background(Color.white)
-            .cornerRadius(12)
+          ForEach(diary.contents) { content in
+            DiaryListCell(state: $state, content: content)
           }
         }
-        .padding()
+        .padding(.top)
       }
     }
-    .background(
-      Color.gray
-        .opacity(0.3)
-        .edgesIgnoringSafeArea(.all)
-    )
+    .background(backgroundColor)
+    .scrollContentBackground(.hidden)
+    .background(.clear)
+  }
+}
+
+private extension DiaryListView {
+  @ViewBuilder
+  func DiaryListSectionHeader(with date: Date) -> some View {
+    Text(date.description(with: "yyyy년 MM월 dd일"))
+  }
+  
+  struct DiaryListCell: View {
+    @Environment(\.backgroundColor) var backgroundColor
+    @Binding var state: SwipeState
+    let content: DiaryContent
+    
+    var body: some View {
+      HStack {
+        VStack(alignment: .leading) {
+          Text(content.title)
+          
+          Text(content.body)
+        }
+        
+        Spacer()
+      }
+      .padding()
+      .background(Color.white)
+      .cornerRadius(12)
+      .padding(.horizontal)
+      .addSwipeAction(
+        backgroundColor: backgroundColor,
+        state: $state,
+        edge: .trailing
+      ) {
+        Image(systemName: "trash")
+          .foregroundColor(.red)
+      }
+    }
   }
 }
 
 struct DiaryListView_Previews: PreviewProvider {
   static var previews: some View {
-    DiaryListView(diaries: Diary.mockDiary)
+    DiaryBoardView()
   }
 }
