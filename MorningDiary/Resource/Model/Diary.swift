@@ -10,6 +10,10 @@ struct Diary: Identifiable, Hashable {
   let id = UUID()
   let createdDate: Date
   let contents: [DiaryContent]
+  
+  var dateDescription: String {
+    return createdDate.description(with: "yyyy년 MM월 dd일")
+  }
 }
 
 struct DiaryContent: Identifiable, Hashable {
@@ -58,13 +62,4 @@ extension Diary {
       ]
     ),
   ]
-}
-
-extension Date {
-  func description(with format: String) -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = format
-    
-    return formatter.string(from: self)
-  }
 }
