@@ -12,7 +12,6 @@ struct MorningDiaryApp: App {
   var body: some Scene {
     WindowGroup {
       DiaryBoardView()
-        .environment(\.backgroundColor, Color(uiColor: .secondarySystemBackground))
     }
   }
 }
