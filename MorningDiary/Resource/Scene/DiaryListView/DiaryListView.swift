@@ -9,24 +9,29 @@ import SwiftUI
 struct DiaryListView: View {
   @Environment(\.backgroundColor) var backgroundColor
   @Binding var selectedContent: DiaryContent?
-  @State var toggleState: ToggleState = .unSelected
-  @State var state: SwipeState = .untouched
+  @State private var state: SwipeState = .untouched
   let diaries: [Diary]
   
   var body: some View {
-    ScrollView {
+    ScrollView(.vertical, showsIndicators: false) {
       ForEach(diaries) { diary in
         VStack(alignment: .leading) {
           Text(diary.dateDescription)
             .padding(.horizontal)
           
           ForEach(diary.contents) { content in
-            DiaryListCell(toggleState: $toggleState, state: $state, content: content)
+            DiaryListCell(
+              selectedContent: $selectedContent,
+              state: $state,
+              content: content
+            )
           }
         }
-        .padding(.top)
+        .padding(.vertical)
       }
     }
+    
+    .listStyle(.plain)
     .background(backgroundColor)
     .scrollContentBackground(.hidden)
     .background(.clear)
@@ -41,14 +46,13 @@ private extension DiaryListView {
   
   struct DiaryListCell: View {
     @Environment(\.backgroundColor) var backgroundColor
-    @Binding var toggleState: ToggleState
+    @Binding var selectedContent: DiaryContent?
     @Binding var state: SwipeState
-    let content: DiaryContent
-    let id = UUID()
+    @State var content: DiaryContent
     
     var body: some View {
       HStack {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 30) {
           Text(content.title)
           
           Text(content.body)
@@ -57,9 +61,21 @@ private extension DiaryListView {
         Spacer()
       }
       .padding()
-      .addToggleAction(state: $toggleState)
-      .cornerRadius(12)
+      .foregroundColor(selectedContent?.id == content.id ? .white : .primary)
+      .background(selectedContent?.id == content.id ? Color.accentColor : Color.white)
+      .cornerRadius(16)
       .padding(.horizontal)
+      .padding(.vertical, 5)
+      .onTapGesture {
+        withAnimation {
+          if selectedContent?.id == content.id {
+            selectedContent = nil
+            return
+          }
+          
+          selectedContent = content
+        }
+      }
       .addSwipeAction(
         backgroundColor: backgroundColor,
         state: $state,
