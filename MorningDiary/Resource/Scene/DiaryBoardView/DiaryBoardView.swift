@@ -11,7 +11,7 @@ struct DiaryBoardView: View {
   @State private var selectedContent: DiaryContent?
   
   var body: some View {
-    HStack {
+    HStack(spacing: .zero) {
       NavigationStack {
         DiaryListView(
           selectedContent: $selectedContent,

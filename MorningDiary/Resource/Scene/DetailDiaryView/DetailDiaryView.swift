@@ -8,37 +8,22 @@ import SwiftUI
 
 struct DetailDiaryView: View {
   @Binding var selectedContent: DiaryContent?
+  @State private var showMenu: Bool = false
   
   var body: some View {
-    VStack(alignment: .leading) {
-      HStack {
-        Text(selectedContent?.title ?? "")
-          .font(.system(size: 24, weight: .bold))
-        
-        Spacer()
-      }
-      
-      HStack {
-        Text(selectedContent?.body ?? "")
-        
-        Spacer()
-      }
-      
-      Spacer()
+    if let content = selectedContent {
+      DiaryDisplayView(
+        selectedContent: _selectedContent,
+        showMenu: $showMenu,
+        content: content
+      )
+      .transition(.opacity.animation(.easeIn))
     }
-    .padding(.horizontal)
-    .toolbar {
-      if (selectedContent == nil) == false {
-        ToolbarItem(placement: .navigationBarLeading) {
-          Button {
-            withAnimation {
-              self.selectedContent = nil
-            }
-          } label: {
-            Image(systemName: "chevron.backward")
-          }
-        }
-      }
-    }
+  }
+}
+
+struct DetailDiaryView_Previews: PreviewProvider {
+  static var previews: some View {
+    DiaryBoardView()
   }
 }
