@@ -46,6 +46,7 @@ private extension DiaryListView {
   
   struct DiaryListCell: View {
     @Environment(\.backgroundColor) var backgroundColor
+    @Environment(\.cornerRadius) var cornerRadius
     @Binding var selectedContent: DiaryContent?
     @Binding var state: SwipeState
     @State var content: DiaryContent
@@ -63,7 +64,7 @@ private extension DiaryListView {
       .padding()
       .foregroundColor(selectedContent?.id == content.id ? .white : .primary)
       .background(selectedContent?.id == content.id ? Color.accentColor : Color.white)
-      .cornerRadius(16)
+      .cornerRadius(cornerRadius)
       .padding(.horizontal)
       .padding(.vertical, 5)
       .onTapGesture {
