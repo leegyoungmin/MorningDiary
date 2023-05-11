@@ -89,15 +89,15 @@ private extension DiaryDisplayView {
         } label: {
           Image(systemName: "square.and.arrow.up")
         }
+        .popover(isPresented: $shareSheet) {
+          ShareSheetView(text: content.title + "\n" + content.body)
+        }
       }
       .font(.largeTitle)
       .padding(.horizontal, 100)
       .padding(.vertical)
       .background(Color.white)
       .cornerRadius(16)
-      .popover(isPresented: $shareSheet) {
-        ShareSheetView(text: content.title + "\n" + content.body)
-      }
     }
   }
 }
