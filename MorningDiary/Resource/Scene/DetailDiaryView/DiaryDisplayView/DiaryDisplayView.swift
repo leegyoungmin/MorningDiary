@@ -56,8 +56,8 @@ private extension DiaryDisplayView {
     VStack(alignment: .leading) {
       HStack {
         Text(content.title)
-          .font(.system(size: 28, weight: .bold))
-        
+          .font(.system(size: 32, weight: .bold))
+
         Spacer()
         
         Button {
