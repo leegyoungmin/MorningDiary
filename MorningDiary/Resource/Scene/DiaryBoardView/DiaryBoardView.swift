@@ -12,20 +12,22 @@ struct DiaryBoardView: View {
   
   var body: some View {
     HStack(spacing: .zero) {
-      NavigationStack {
+      NavigationView {
         DiaryListView(
           selectedContent: $selectedContent,
           diaries: mockDiaries
         )
         .navigationTitle("모닝 일기")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbarBackground(.visible, for: .navigationBar)
       }
+      .navigationViewStyle(.stack)
       .frame(maxWidth: 450)
       
-      NavigationStack {
+      NavigationView {
         DetailDiaryView(selectedContent: $selectedContent)
+          .navigationBarTitleDisplayMode(.inline)
       }
+      .navigationViewStyle(.stack)
     }
   }
 }

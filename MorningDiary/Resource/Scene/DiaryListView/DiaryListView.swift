@@ -28,13 +28,11 @@ struct DiaryListView: View {
           }
         }
         .padding(.vertical)
+        .background(.clear)
       }
     }
-    
     .listStyle(.plain)
     .background(backgroundColor)
-    .scrollContentBackground(.hidden)
-    .background(.clear)
   }
 }
 
@@ -92,5 +90,6 @@ private extension DiaryListView {
 struct DiaryListView_Previews: PreviewProvider {
   static var previews: some View {
     DiaryBoardView()
+      .previewInterfaceOrientation(.landscapeLeft)
   }
 }
