@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct BackgroundColor: EnvironmentKey {
-  static var defaultValue: Color = Color(uiColor: .secondarySystemBackground)
+  static var defaultValue: Color = Color(.secondarySystemBackground)
 }
 
 struct CornerRadius: EnvironmentKey {
