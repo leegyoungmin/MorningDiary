@@ -28,7 +28,7 @@ struct DiaryListView: View {
           }
         }
         .padding(.vertical)
-        .background(.clear)
+        .background(backgroundColor)
       }
     }
     .listStyle(.plain)
