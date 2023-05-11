@@ -8,6 +8,7 @@ import SwiftUI
 
 struct DiaryDisplayView: View {
   @Binding var selectedContent: DiaryContent?
+  @Binding var editMode: Bool
   @Binding var showMenu: Bool
   @State var shareSheet: Bool = false
   let content: DiaryContent
@@ -22,7 +23,7 @@ struct DiaryDisplayView: View {
       }
     }
     .padding()
-    .background(showMenu ? .gray.opacity(0.2) : .clear)
+    .background(showMenu ? Color.black.opacity(0.1) : .white)
     .toolbar {
       ToolbarItem(placement: .navigationBarLeading) {
         Button {
@@ -36,13 +37,21 @@ struct DiaryDisplayView: View {
     }
     .onChange(of: selectedContent) { newValue in
       withAnimation {
-        showMenu.toggle()
+        showMenu = false
+        editMode = false
       }
     }
   }
 }
 
 private extension DiaryDisplayView {
+  func reset() {
+    withAnimation {
+      editMode = false
+      showMenu = false
+    }
+  }
+  
   var contentSection: some View {
     VStack(alignment: .leading) {
       HStack {
@@ -76,8 +85,17 @@ private extension DiaryDisplayView {
       Spacer()
       
       HStack(spacing: 100) {
+        
         Button {
-          print("Tapped Edit")
+          reset()
+        } label: {
+          Image(systemName: "xmark")
+        }
+
+        Button {
+          withAnimation {
+            editMode = true
+          }
         } label: {
           Image(systemName: "pencil")
         }
