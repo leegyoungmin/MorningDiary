@@ -9,6 +9,7 @@ import SwiftUI
 struct DiaryDisplayView: View {
   @Binding var selectedContent: DiaryContent?
   @Binding var showMenu: Bool
+  @State var shareSheet: Bool = false
   let content: DiaryContent
   
   var body: some View {
@@ -82,7 +83,9 @@ private extension DiaryDisplayView {
         }
         
         Button {
-          print("Tapped share")
+          withAnimation {
+            shareSheet = true
+          }
         } label: {
           Image(systemName: "square.and.arrow.up")
         }
@@ -92,6 +95,9 @@ private extension DiaryDisplayView {
       .padding(.vertical)
       .background(Color.white)
       .cornerRadius(16)
+      .popover(isPresented: $shareSheet) {
+        ShareSheetView(text: content.title + "\n" + content.body)
+      }
     }
   }
 }
