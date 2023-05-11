@@ -31,41 +31,6 @@ struct DetailDiaryView: View {
   }
 }
 
-struct DiaryEditView: View {
-  @State var title: String = ""
-  @State var description: String = ""
-  @State var images: [String] = []
-  
-  init(content: DiaryContent) {
-    self._title = State(initialValue: content.title)
-    self._description = State(initialValue: content.body)
-    self._images = State(initialValue: content.images)
-  }
-  
-  init() { }
-  
-  var body: some View {
-    VStack {
-      TextField("제목을 입력하세요", text: $title)
-        
-      
-      TextEditor(text: $description)
-      
-      Spacer()
-      
-      HStack {
-        Button {
-          print("Tapped ImageButton")
-        } label: {
-          Image(systemName: "photo.on.rectangle.angled")
-        }
-
-      }
-    }
-    .keyboardShortcut(.return)
-  }
-}
-
 struct DetailDiaryView_Previews: PreviewProvider {
   static var previews: some View {
     DiaryBoardView()
