@@ -53,7 +53,7 @@ private extension DiaryDisplayView {
   }
   
   var contentSection: some View {
-    VStack(alignment: .leading) {
+    VStack(alignment: .leading, spacing: 20) {
       HStack {
         Text(content.title)
           .font(.system(size: 32, weight: .bold))
@@ -70,11 +70,8 @@ private extension DiaryDisplayView {
         }
       }
       
-      HStack {
-        Text(content.body)
-        
-        Spacer()
-      }
+      Text(content.body)
+        .font(.system(size: 24))
       
       Spacer()
     }
