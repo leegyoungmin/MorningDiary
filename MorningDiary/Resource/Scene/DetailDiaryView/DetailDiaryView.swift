@@ -19,24 +19,25 @@ struct DetailDiaryView: View {
   }
   
   var body: some View {
-    if let content = selectedContent {
-      if editMode == false {
-        DiaryDisplayView(
-          selectedContent: _selectedContent,
-          editMode: $editMode,
-          showMenu: $showMenu,
-          content: content
-        )
-        .transition(.opacity.animation(.easeIn))
+    ZStack {
+      if let content = selectedContent {
+        if editMode == false {
+          DiaryDisplayView(
+            selectedContent: _selectedContent,
+            editMode: $editMode,
+            showMenu: $showMenu,
+            content: content
+          )
+        } else {
+          DiaryEditView(content: content)
+        }
       } else {
-        DiaryEditView(content: content)
-          .onChange(of: selectedContent, perform: resetState)
+        // TODO: - EditMode View 구현 (기본으로 작성할 수 있는 공간)
+        DiaryEditView()
       }
-    } else {
-      // TODO: - EditMode View 구현 (기본으로 작성할 수 있는 공간)
-      DiaryEditView()
-        .onChange(of: selectedContent, perform: resetState)
     }
+    .onChange(of: selectedContent, perform: resetState)
+    .transition(.opacity.animation(.easeIn))
   }
 }
 
