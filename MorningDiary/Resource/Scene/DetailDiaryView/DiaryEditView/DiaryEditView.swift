@@ -40,7 +40,9 @@ struct DiaryEditView: View {
               .clipShape(RoundedRectangle(cornerRadius: 12))
               .overlay(alignment: .topTrailing) {
                 Button {
-                  print("Tapped Delete Image Button \(photo.id)")
+                  withAnimation {
+                    selectedImage.removeAll(where: { $0.id == photo.id })
+                  }
                 } label: {
                   Image(systemName: "xmark.circle")
                 }
@@ -66,6 +68,7 @@ struct DiaryEditView: View {
         }
         .popover(isPresented: $showImagePicker) {
           ImagePicker(selectedImages: $selectedImage)
+            .frame(maxWidth: 400)
         }
         
         Button {
