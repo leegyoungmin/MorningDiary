@@ -11,6 +11,9 @@ struct DiaryEditView: View {
   @State var description: String = ""
   @State var images: [String] = []
   
+  @State private var showImagePicker: Bool = false
+  @State private var selectedImage: [Photo] = []
+  
   init(content: DiaryContent) {
     self._title = State(initialValue: content.title)
     self._description = State(initialValue: content.body)
@@ -27,6 +30,27 @@ struct DiaryEditView: View {
       
       TextEditor(text: $description)
       
+      HStack {
+        ForEach(selectedImage, id: \.id) { photo in
+          if let photo = photo {
+            Image(uiImage: photo.image)
+              .resizable()
+              .scaledToFill()
+              .frame(width: 80, height: 80)
+              .clipShape(RoundedRectangle(cornerRadius: 12))
+              .overlay(alignment: .topTrailing) {
+                Button {
+                  print("Tapped Delete Image Button \(photo.id)")
+                } label: {
+                  Image(systemName: "xmark.circle")
+                }
+              }
+          }
+        }
+        
+        Spacer()
+      }
+      
       Spacer()
       
       Divider()
@@ -35,11 +59,13 @@ struct DiaryEditView: View {
         Button {
           withAnimation(.easeIn(duration: 0.1)) {
             UIApplication.endEditing()
+            showImagePicker = true
           }
-          
-          // TODO: - 이미지 선택창 구현하기
         } label: {
           Image(systemName: "photo.on.rectangle.angled")
+        }
+        .popover(isPresented: $showImagePicker) {
+          ImagePicker(selectedImages: $selectedImage)
         }
         
         Button {
