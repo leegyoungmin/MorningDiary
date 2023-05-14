@@ -11,23 +11,26 @@ struct DiaryBoardView: View {
   @State private var selectedContent: DiaryContent?
   
   var body: some View {
-    HStack(spacing: .zero) {
-      NavigationView {
-        DiaryListView(
-          selectedContent: $selectedContent,
-          diaries: mockDiaries
-        )
-        .navigationTitle("모닝 일기")
-        .navigationBarTitleDisplayMode(.inline)
-      }
-      .navigationViewStyle(.stack)
-      .frame(maxWidth: 450)
-      
-      NavigationView {
-        DetailDiaryView(selectedContent: $selectedContent)
+    GeometryReader { proxy in
+      HStack(spacing: .zero) {
+        NavigationView {
+          DiaryListView(
+            selectedContent: $selectedContent,
+            diaries: mockDiaries
+          )
+          .navigationTitle("모닝 일기")
           .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationViewStyle(.stack)
+        .frame(width: proxy.size.width / 3, height: proxy.size.height)
+        
+        NavigationView {
+          DetailDiaryView(selectedContent: $selectedContent)
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationViewStyle(.stack)
+        .frame(width: proxy.size.width * (2 / 3), height: proxy.size.height)
       }
-      .navigationViewStyle(.stack)
     }
   }
 }
