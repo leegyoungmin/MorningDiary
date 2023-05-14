@@ -23,12 +23,14 @@ struct DiaryEditView: View {
   init() { }
   
   var body: some View {
-    VStack {
+    VStack(spacing: 20) {
       TextField("제목을 입력하세요", text: $title)
         .font(.system(size: 32, weight: .bold))
         .submitLabel(.next)
       
       TextEditor(text: $description)
+      
+      Spacer()
       
       HStack {
         ForEach(selectedImage, id: \.id) { photo in
@@ -38,22 +40,21 @@ struct DiaryEditView: View {
               .scaledToFill()
               .frame(width: 80, height: 80)
               .clipShape(RoundedRectangle(cornerRadius: 12))
-              .overlay(alignment: .topTrailing) {
-                Button {
+              .contextMenu {
+                Button(role: .destructive) {
                   withAnimation {
                     selectedImage.removeAll(where: { $0.id == photo.id })
                   }
                 } label: {
-                  Image(systemName: "xmark.circle")
+                  Label("삭제", systemImage: "trash")
                 }
               }
+            
           }
         }
         
         Spacer()
       }
-      
-      Spacer()
       
       Divider()
       
@@ -84,8 +85,7 @@ struct DiaryEditView: View {
         Spacer()
       }
       .font(.title2)
-      .padding(.top)
     }
-    .padding()
+    .padding(.horizontal)
   }
 }
