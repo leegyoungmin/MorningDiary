@@ -38,13 +38,12 @@ struct DiaryEditView: View {
             Image(uiImage: photo.image)
               .resizable()
               .scaledToFill()
+              .transition(.opacity.animation(.easeIn))
               .frame(width: 80, height: 80)
               .clipShape(RoundedRectangle(cornerRadius: 12))
               .contextMenu {
                 Button(role: .destructive) {
-                  withAnimation {
-                    selectedImage.removeAll(where: { $0.id == photo.id })
-                  }
+                  selectedImage.removeAll(where: { $0.id == photo.id })
                 } label: {
                   Label("삭제", systemImage: "trash")
                 }
