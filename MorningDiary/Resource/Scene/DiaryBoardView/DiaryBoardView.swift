@@ -7,7 +7,7 @@
 import SwiftUI
 
 struct DiaryBoardView: View {
-  @State private var mockDiaries = Diary.mockDiary
+  // TODO: - Diary Data 읽어오기
   @State private var selectedContent: DiaryContent?
   
   var body: some View {
@@ -16,7 +16,7 @@ struct DiaryBoardView: View {
         NavigationView {
           DiaryListView(
             selectedContent: $selectedContent,
-            diaries: mockDiaries
+            diaries: []
           )
           .navigationTitle("모닝 일기")
           .navigationBarTitleDisplayMode(.inline)

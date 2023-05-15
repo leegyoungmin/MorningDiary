@@ -20,46 +20,6 @@ struct DiaryContent: Identifiable, Hashable {
   let id = UUID()
   let title: String
   let body: String
+  let createdDate: Date
   let images: [String]
-}
-
-extension Diary {
-  static let mockDiary: [Diary] = [
-    .init(
-      createdDate: Date().addingTimeInterval(-100000000),
-      contents: [
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-      ]
-    ),
-    .init(
-      createdDate: Date(),
-      contents: [
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-      ]
-    ),
-    .init(
-      createdDate: Date().addingTimeInterval(100000000),
-      contents: [
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-        .init(title: "Example1", body: "Example", images: []),
-      ]
-    ),
-  ]
 }
