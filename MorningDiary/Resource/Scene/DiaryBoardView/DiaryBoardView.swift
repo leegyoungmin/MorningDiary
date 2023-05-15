@@ -14,12 +14,9 @@ struct DiaryBoardView: View {
     GeometryReader { proxy in
       HStack(spacing: .zero) {
         NavigationView {
-          DiaryListView(
-            selectedContent: $selectedContent,
-            diaries: []
-          )
-          .navigationTitle("모닝 일기")
-          .navigationBarTitleDisplayMode(.inline)
+          DiaryListView(selectedContent: $selectedContent)
+            .navigationTitle("모닝 일기")
+            .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(.stack)
         .frame(width: proxy.size.width / 3, height: proxy.size.height)
