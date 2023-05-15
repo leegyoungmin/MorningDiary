@@ -8,18 +8,33 @@ import SwiftUI
 
 struct DiaryListView: View {
   @Environment(\.backgroundColor) var backgroundColor
+  @FetchRequest(
+    entity: DiaryContent.entity(),
+    sortDescriptors: []
+  ) var contents: FetchedResults<DiaryContent>
+  
   @Binding var selectedContent: DiaryContent?
   @State private var state: SwipeState = .untouched
-  let diaries: [Diary]
+  
+  var diaries: [String: [DiaryContent]] {
+    get {
+      return group(contents)
+    }
+  }
+  
+  func group(_ result: FetchedResults<DiaryContent>) -> [String: [DiaryContent]] {
+    let result = Dictionary(grouping: result) { $0.issuedDate }
+    return result
+  }
   
   var body: some View {
     ScrollView(.vertical, showsIndicators: false) {
-      ForEach(diaries) { diary in
+      ForEach(diaries.sorted(by: { $0.key > $1.key }), id: \.key) { key, values in
         VStack(alignment: .leading) {
-          Text(diary.dateDescription)
+          Text(key) // SECTION HEADER
             .padding(.horizontal)
           
-          ForEach(diary.contents) { content in
+          ForEach(values, id: \.id) { content in // DIARY LIST CELLS
             DiaryListCell(
               selectedContent: $selectedContent,
               state: $state,
@@ -27,8 +42,6 @@ struct DiaryListView: View {
             )
           }
         }
-        .padding(.vertical)
-        .background(backgroundColor)
       }
     }
     .listStyle(.plain)
@@ -37,26 +50,24 @@ struct DiaryListView: View {
 }
 
 private extension DiaryListView {
-  @ViewBuilder
-  func DiaryListSectionHeader(with date: Date) -> some View {
-    Text(date.description(with: "yyyy년 MM월 dd일"))
-  }
-  
   struct DiaryListCell: View {
+    @Environment(\.managedObjectContext) var context
     @Environment(\.backgroundColor) var backgroundColor
     @Environment(\.cornerRadius) var cornerRadius
+
     @Binding var selectedContent: DiaryContent?
     @Binding var state: SwipeState
-    @State var content: DiaryContent
     
+    let content: DiaryContent
+
     var body: some View {
       HStack {
         VStack(alignment: .leading, spacing: 30) {
           Text(content.title)
-          
+
           Text(content.body)
         }
-        
+
         Spacer()
       }
       .padding()
@@ -71,7 +82,7 @@ private extension DiaryListView {
             selectedContent = nil
             return
           }
-          
+
           selectedContent = content
         }
       }
@@ -80,8 +91,16 @@ private extension DiaryListView {
         state: $state,
         edge: .trailing
       ) {
-        Image(systemName: "trash")
-          .foregroundColor(.red)
+        Button {
+          withAnimation {
+            context.delete(content)
+            try? context.save()
+          }
+        } label: {
+          Image(systemName: "trash")
+            .foregroundColor(selectedContent?.id == content.id ? .gray : .red)
+        }
+        .disabled(selectedContent?.id == content.id)
       }
     }
   }
