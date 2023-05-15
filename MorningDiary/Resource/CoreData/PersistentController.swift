@@ -21,7 +21,7 @@ struct PersistentController {
   }
 }
 
-private extension PersistentController {
+extension PersistentController {
   func saveContext() {
     let context = container.viewContext
     
