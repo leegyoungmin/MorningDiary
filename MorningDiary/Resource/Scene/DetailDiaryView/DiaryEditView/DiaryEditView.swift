@@ -7,6 +7,8 @@
 import SwiftUI
 
 struct DiaryEditView: View {
+  @Environment(\.managedObjectContext) var context
+  @Binding var selectedDiary: DiaryContent?
   @State var title: String = ""
   @State var description: String = ""
   @State var images: [String] = []
@@ -14,13 +16,33 @@ struct DiaryEditView: View {
   @State private var showImagePicker: Bool = false
   @State private var selectedImage: [Photo] = []
   
-  init(content: DiaryContent) {
-    self._title = State(initialValue: content.title)
-    self._description = State(initialValue: content.body)
-    self._images = State(initialValue: content.images)
+  init(selectedDiary: Binding<DiaryContent?>) {
+    _selectedDiary = selectedDiary
+    
+    if let diary = selectedDiary.wrappedValue {
+      _title = State(initialValue: diary.title)
+      _description = State(initialValue: diary.body)
+    }
   }
   
-  init() { }
+  func updateContent(with content: DiaryContent) {
+    content.title = title
+    content.body = description
+    content.issuedDate = Date().description(with: "yyyy년 MM월 dd일")
+    try? context.save()
+  }
+  
+  func saveContent() {
+    if let content = selectedDiary {
+      updateContent(with: content)
+      return
+    }
+    
+    let content = DiaryContent(context: context)
+    content.id = UUID()
+    content.createdDate = Date().description(with: "yyyy년 MM월 dd일")
+    updateContent(with: content)
+  }
   
   var body: some View {
     VStack(spacing: 20) {
@@ -86,5 +108,18 @@ struct DiaryEditView: View {
       .font(.title2)
     }
     .padding(.horizontal)
+    .toolbar {
+      ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+          withAnimation {
+            saveContent()
+            selectedDiary = nil
+          }
+        } label: {
+          Image(systemName: "checkmark")
+            .font(.title3)
+        }
+      }
+    }
   }
 }
