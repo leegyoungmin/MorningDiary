@@ -7,11 +7,6 @@
 import SwiftUI
 import PhotosUI
 
-struct Photo: Identifiable {
-  let id = UUID()
-  let image: UIImage
-}
-
 struct ImagePicker: UIViewControllerRepresentable {
   @Binding var selectedImages: [Photo]
   
