@@ -28,24 +28,26 @@ struct DiaryListView: View {
   }
   
   var body: some View {
-    ScrollView(.vertical, showsIndicators: false) {
-      ForEach(diaries.sorted(by: { $0.key > $1.key }), id: \.key) { key, values in
-        VStack(alignment: .leading) {
-          Text(key) // SECTION HEADER
-            .padding(.horizontal)
-          
-          ForEach(values, id: \.id) { content in // DIARY LIST CELLS
-            DiaryListCell(
-              selectedContent: $selectedContent,
-              state: $state,
-              content: content
-            )
+    ZStack {
+      backgroundColor.edgesIgnoringSafeArea(.all)
+      
+      ScrollView(.vertical, showsIndicators: false) {
+        ForEach(diaries.sorted(by: { $0.key > $1.key }), id: \.key) { key, values in
+          VStack(alignment: .leading) {
+            Text(key) // SECTION HEADER
+              .padding(.horizontal)
+            
+            ForEach(values, id: \.id) { content in // DIARY LIST CELLS
+              DiaryListCell(
+                selectedContent: $selectedContent,
+                state: $state,
+                content: content
+              )
+            }
           }
         }
       }
     }
-    .listStyle(.plain)
-    .background(backgroundColor)
   }
 }
 
