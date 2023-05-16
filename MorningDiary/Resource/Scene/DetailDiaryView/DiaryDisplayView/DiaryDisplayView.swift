@@ -5,6 +5,7 @@
 //  Copyright (c) 2023 Minii All rights reserved.
 
 import SwiftUI
+import CoreData
 
 struct DiaryDisplayView: View {
   @Binding var selectedContent: DiaryContent?
@@ -13,9 +14,26 @@ struct DiaryDisplayView: View {
   @State var shareSheet: Bool = false
   let content: DiaryContent
   
+  @State private var images: [ImageData] = []
+  
+  init(selectedContent: Binding<DiaryContent?>, editMode: Binding<Bool>, showMenu: Binding<Bool>) {
+    _selectedContent = selectedContent
+    _editMode = editMode
+    _showMenu = showMenu
+    
+    if let content = selectedContent.wrappedValue {
+      self.content = content
+      _images = State(initialValue: content.imageData.allObjects as? [ImageData] ?? [])
+    } else {
+      self.content = DiaryContent()
+    }
+  }
+  
   var body: some View {
     ZStack {
-      contentSection
+      ScrollView {
+        contentSection
+      }
       
       if showMenu {
         menuSection
@@ -36,9 +54,10 @@ struct DiaryDisplayView: View {
       }
     }
     .onChange(of: selectedContent) { newValue in
-      withAnimation {
-        showMenu = false
-        editMode = false
+      reset()
+      
+      if let content = newValue {
+        self._images.wrappedValue = content.imageData.allObjects as? [ImageData] ?? []
       }
     }
   }
@@ -69,6 +88,7 @@ private extension DiaryDisplayView {
             .font(.title)
         }
       }
+      // TODO: - Grid View 사용하여서 이미지 뷰 구성하기
       
       Text(content.body)
         .font(.system(size: 24))
