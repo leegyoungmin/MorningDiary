@@ -16,6 +16,15 @@ struct DiaryEditView: View {
   @State private var showImagePicker: Bool = false
   @State private var selectedImage: [Photo] = []
   
+  @State private var showErrorAlert: Bool = false
+  @State private var errorState: EditError? = nil {
+    willSet {
+      if newValue != nil {
+        showErrorAlert = true
+      }
+    }
+  }
+  
   init(selectedDiary: Binding<DiaryContent?>) {
     _selectedDiary = selectedDiary
     
@@ -23,25 +32,6 @@ struct DiaryEditView: View {
       _title = State(initialValue: diary.title)
       _description = State(initialValue: diary.body)
     }
-  }
-  
-  func updateContent(with content: DiaryContent) {
-    content.title = title
-    content.body = description
-    content.issuedDate = Date().description(with: "yyyy년 MM월 dd일")
-    try? context.save()
-  }
-  
-  func saveContent() {
-    if let content = selectedDiary {
-      updateContent(with: content)
-      return
-    }
-    
-    let content = DiaryContent(context: context)
-    content.id = UUID()
-    content.createdDate = Date().description(with: "yyyy년 MM월 dd일")
-    updateContent(with: content)
   }
   
   var body: some View {
@@ -113,7 +103,6 @@ struct DiaryEditView: View {
         Button {
           withAnimation {
             saveContent()
-            selectedDiary = nil
           }
         } label: {
           Image(systemName: "checkmark")
@@ -121,5 +110,69 @@ struct DiaryEditView: View {
         }
       }
     }
+    .alert(isPresented: $showErrorAlert, error: errorState) { }
+  }
+}
+
+private extension DiaryEditView {
+  enum EditError: String, Error, LocalizedError {
+    case emptyTitle = "제목 오류"
+    case emptyDescription = "본문 오류"
+    
+    var errorDescription: String? {
+      switch self {
+      case .emptyTitle:
+        return "제목이 비어있습니다."
+        
+      case .emptyDescription:
+        return "본문이 비어있습니다."
+      }
+    }
+  }
+  
+  func validate() -> Bool {
+    guard title.trimmingCharacters(in: .whitespaces).isEmpty == false else {
+      self.errorState = .emptyTitle
+      return false
+    }
+    
+    guard description.trimmingCharacters(in: .whitespaces).isEmpty == false else {
+      self.errorState = .emptyDescription
+      return false
+    }
+    
+    return true
+  }
+  
+  func resetState() {
+    self.title = ""
+    self.description = ""
+    self.images = []
+    self.selectedDiary = nil
+  }
+  
+  func updateContent(with content: DiaryContent) {
+    content.title = title
+    content.body = description
+    content.issuedDate = Date().description(with: "yyyy년 MM월 dd일")
+    try? context.save()
+    
+    resetState()
+  }
+  
+  func saveContent() {
+    guard validate() else {
+      return
+    }
+    
+    if let content = selectedDiary {
+      updateContent(with: content)
+      return
+    }
+    
+    let content = DiaryContent(context: context)
+    content.id = UUID()
+    content.createdDate = Date().description(with: "yyyy년 MM월 dd일")
+    updateContent(with: content)
   }
 }
