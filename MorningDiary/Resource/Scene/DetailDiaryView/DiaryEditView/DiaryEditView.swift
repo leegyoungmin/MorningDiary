@@ -14,6 +14,7 @@ struct DiaryEditView: View {
   @State var images: [String] = []
   
   @State private var showImagePicker: Bool = false
+  @State private var showCamera: Bool = false
   @State private var selectedImage: [Photo] = []
   
   @State private var showErrorAlert: Bool = false
@@ -71,6 +72,15 @@ struct DiaryEditView: View {
       
       HStack {
         Button {
+          withAnimation {
+            UIApplication.endEditing()
+            showCamera = true
+          }
+        } label: {
+          Image(systemName: "camera")
+        }
+        
+        Button {
           withAnimation(.easeIn(duration: 0.1)) {
             UIApplication.endEditing()
             showImagePicker = true
@@ -79,18 +89,8 @@ struct DiaryEditView: View {
           Image(systemName: "photo.on.rectangle.angled")
         }
         .popover(isPresented: $showImagePicker) {
-          ImagePicker(selectedImages: $selectedImage)
+          ImagePickerView(selectedImages: $selectedImage, isCamera: false)
             .frame(maxWidth: 400)
-        }
-        
-        Button {
-          withAnimation(.easeIn(duration: 0.1)) {
-            UIApplication.endEditing()
-          }
-          
-          // TODO: - 지도 뷰 구현하기
-        } label: {
-          Image(systemName: "map")
         }
 
         Spacer()
@@ -111,6 +111,9 @@ struct DiaryEditView: View {
       }
     }
     .alert(isPresented: $showErrorAlert, error: errorState) { }
+    .sheet(isPresented: $showCamera) {
+      ImagePickerView(selectedImages: $selectedImage, isCamera: true)
+    }
   }
 }
 
