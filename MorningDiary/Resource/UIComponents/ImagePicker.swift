@@ -66,8 +66,9 @@ struct ImagePickerView: UIViewControllerRepresentable {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
       picker.dismiss(animated: true)
       guard let editedImage = info[.editedImage] as? UIImage else { return }
+      
       let photo = Photo(image: editedImage)
-      parent.selectedImages.append(photo)
+      self.parent.selectedImages.append(photo)
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -78,17 +79,14 @@ struct ImagePickerView: UIViewControllerRepresentable {
       picker.dismiss(animated: true)
       
       results.forEach {
-        $0.itemProvider.loadObject(ofClass: UIImage.self) { object, error in
+        $0.itemProvider.loadObject(ofClass: UIImage.self) { [weak self] object, error in
+          guard let self = self else { return }
           if let image = object as? UIImage {
             let photo = Photo(image: image)
-            withAnimation {
-              self.parent.selectedImages.append(photo)
-            }
+            self.parent.selectedImages.append(photo)
           }
         }
       }
     }
   }
 }
-
-
