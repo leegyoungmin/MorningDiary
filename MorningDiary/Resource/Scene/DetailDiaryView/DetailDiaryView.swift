@@ -20,19 +20,13 @@ struct DetailDiaryView: View {
   
   var body: some View {
     ZStack {
-      if let content = selectedContent {
-        if editMode == false {
-          DiaryDisplayView(
-            selectedContent: _selectedContent,
-            editMode: $editMode,
-            showMenu: $showMenu,
-            content: content
-          )
-        } else {
-          DiaryEditView(selectedDiary: $selectedContent)
-        }
+      if editMode == false && selectedContent != nil {
+        DiaryDisplayView(
+          selectedContent: _selectedContent,
+          editMode: $editMode,
+          showMenu: $showMenu
+        )
       } else {
-        // TODO: - EditMode View 구현 (기본으로 작성할 수 있는 공간)
         DiaryEditView(selectedDiary: $selectedContent)
       }
     }

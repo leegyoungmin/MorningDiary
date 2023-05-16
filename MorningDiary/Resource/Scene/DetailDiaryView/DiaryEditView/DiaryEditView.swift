@@ -158,6 +158,21 @@ private extension DiaryEditView {
     content.title = title
     content.body = description
     content.issuedDate = Date().description(with: "yyyy년 MM월 dd일")
+    
+    var imageDatas: [ImageData] = []
+    
+    selectedImage.enumerated().map { values in
+      return (values.offset, values.element.image.pngData())
+    }.forEach { offset, image in
+      guard let image = image else { return }
+      let imageData = ImageData(context: context)
+      imageData.data = image
+      
+      imageDatas.append(imageData)
+      imageData.addToAttachment(content)
+      content.addToImageData(imageData)
+    }
+    
     try? context.save()
     
     resetState()
