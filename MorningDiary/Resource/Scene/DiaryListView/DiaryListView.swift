@@ -7,102 +7,69 @@
 import SwiftUI
 
 struct DiaryListView: View {
-  @Environment(\.backgroundColor) var backgroundColor
-  @FetchRequest(
-    entity: DiaryContent.entity(),
-    sortDescriptors: []
-  ) var contents: FetchedResults<DiaryContent>
+  @Binding var selectedItem: SectionItem?
+  private let listSections = ListSection.allCases
   
-  @Binding var selectedContent: DiaryContent?
-  @State private var state: SwipeState = .untouched
-  
-  var diaries: [String: [DiaryContent]] {
-    get {
-      return group(contents)
+  @ViewBuilder private func sectionLabel(with item: SectionItem) -> some View {
+    if item.imageName.isEmpty {
+      Label(item.description, systemImage: item.imageName)
+        .labelStyle(.titleOnly)
     }
-  }
-  
-  func group(_ result: FetchedResults<DiaryContent>) -> [String: [DiaryContent]] {
-    let result = Dictionary(grouping: result) { $0.issuedDate }
-    return result
+    
+    if item.imageName.isEmpty == false {
+      Label(item.description, systemImage: item.imageName)
+        .labelStyle(.titleAndIcon)
+    }
   }
   
   var body: some View {
-    ZStack {
-      backgroundColor.edgesIgnoringSafeArea(.all)
-      
-      ScrollView(.vertical, showsIndicators: false) {
-        ForEach(diaries.sorted(by: { $0.key > $1.key }), id: \.key) { key, values in
-          VStack(alignment: .leading) {
-            Text(key) // SECTION HEADER
-              .padding(.horizontal)
-            
-            ForEach(values, id: \.id) { content in // DIARY LIST CELLS
-              DiaryListCell(
-                selectedContent: $selectedContent,
-                state: $state,
-                content: content
-              )
+    List(listSections, id: \.rawValue) { listSection in
+      PlainDisclosureGroup {
+        Text(listSection.description)
+          .font(.system(size: 24, weight: .bold))
+      } content: {
+        ForEach(listSection.items, id: \.rawValue) { sectionItem in
+          DiaryListSectionButton {
+            withAnimation {
+              self.selectedItem = sectionItem
             }
+          } label: {
+            sectionLabel(with: sectionItem)
           }
+          .foregroundColor(selectedItem == sectionItem ? Color("AccentLabelColor") : Color("LabelColor"))
+          .padding(12)
+          .background(selectedItem == sectionItem ? Color.accentColor : .white)
+          .cornerRadius(10)
         }
       }
+      .listRowSeparator(.hidden)
     }
+    .listStyle(.plain)
   }
 }
 
 private extension DiaryListView {
-  struct DiaryListCell: View {
-    @Environment(\.managedObjectContext) var context
-    @Environment(\.backgroundColor) var backgroundColor
-    @Environment(\.cornerRadius) var cornerRadius
-
-    @Binding var selectedContent: DiaryContent?
-    @Binding var state: SwipeState
+  struct DiaryListSectionButton<Label: View>: View {
+    let action: () -> Void
+    let label: () -> Label
     
-    let content: DiaryContent
-
+    init(_ action: @escaping () -> Void, label: @escaping () -> Label) {
+      self.action = action
+      self.label = label
+    }
+    
     var body: some View {
       HStack {
-        VStack(alignment: .leading, spacing: 30) {
-          Text(content.title)
-
-          Text(content.body)
-        }
-
+        label()
+        
         Spacer()
       }
-      .padding()
-      .foregroundColor(selectedContent?.id == content.id ? .white : .primary)
-      .background(selectedContent?.id == content.id ? Color.accentColor : Color.white)
-      .cornerRadius(cornerRadius)
-      .padding(.horizontal)
-      .padding(.vertical, 5)
+      .frame(maxWidth: .infinity)
+      .contentShape(RoundedRectangle(cornerRadius: 10))
       .onTapGesture {
         withAnimation {
-          if selectedContent?.id == content.id {
-            selectedContent = nil
-            return
-          }
-
-          selectedContent = content
+          action()
         }
-      }
-      .addSwipeAction(
-        backgroundColor: backgroundColor,
-        state: $state,
-        edge: .trailing
-      ) {
-        Button {
-          withAnimation {
-            context.delete(content)
-            try? context.save()
-          }
-        } label: {
-          Image(systemName: "trash")
-            .foregroundColor(selectedContent?.id == content.id ? .gray : .red)
-        }
-        .disabled(selectedContent?.id == content.id)
       }
     }
   }

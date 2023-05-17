@@ -8,47 +8,17 @@ import SwiftUI
 
 struct DiaryBoardView: View {
   // TODO: - Diary Data 읽어오기
-  @State private var selectedContent: DiaryContent?
-  
-  @ViewBuilder
-  func listItemButton(with item: String) -> some View {
-    Button {
-      print("Tapped")
-    } label: {
-      HStack {
-        Label("Example", systemImage: "person.circle")
-        
-        Spacer()
-      }
-      .font(.title3)
-      .foregroundColor(.white)
-      .padding(12)
-      .background(Color.red)
-      .cornerRadius(10)
-    }
-    .buttonStyle(.borderless)
-  }
+  @State private var selectedContent: SectionItem?
   
   var body: some View {
     NavigationView {
-      List {
-        PlainDisclosureGroup {
-          Text("Example")
-            .font(.system(size: 32, weight: .bold))
-        } content: {
-          ForEach(1..<19) {
-            listItemButton(with: $0.description)
-          }
-        }
-        .listRowSeparator(.hidden)
-      }
-      .listStyle(.plain)
+      DiaryListView(selectedItem: $selectedContent)
     }
   }
 }
 
 struct PlainDisclosureGroup<Label: View, Content: View>: View {
-  @State private var isExpended: Bool = false
+  @State private var isExpended: Bool = true
   let label: () -> Label
   let content: () -> Content
   
