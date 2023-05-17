@@ -24,22 +24,12 @@ struct DiaryListView: View {
   
   var body: some View {
     List(listSections, id: \.rawValue) { listSection in
-      PlainDisclosureGroup {
+      MODADisclosureGroup {
         Text(listSection.description)
           .font(.system(size: 24, weight: .bold))
       } content: {
-        ForEach(listSection.items, id: \.rawValue) { sectionItem in
-          DiaryListSectionButton {
-            withAnimation {
-              self.selectedItem = sectionItem
-            }
-          } label: {
-            sectionLabel(with: sectionItem)
-          }
-          .foregroundColor(selectedItem == sectionItem ? Color("AccentLabelColor") : Color("LabelColor"))
-          .padding(12)
-          .background(selectedItem == sectionItem ? Color.accentColor : .white)
-          .cornerRadius(10)
+        ForEach(listSection.items, id: \.rawValue) { sectionChild in
+          ListSectionChildView(selectedItem: $selectedItem, sectionChild: sectionChild)
         }
       }
       .listRowSeparator(.hidden)
@@ -49,28 +39,22 @@ struct DiaryListView: View {
 }
 
 private extension DiaryListView {
-  struct DiaryListSectionButton<Label: View>: View {
-    let action: () -> Void
-    let label: () -> Label
-    
-    init(_ action: @escaping () -> Void, label: @escaping () -> Label) {
-      self.action = action
-      self.label = label
-    }
+  struct ListSectionChildView: View {
+    @Binding var selectedItem: SectionItem?
+    let sectionChild: SectionItem
     
     var body: some View {
-      HStack {
-        label()
-        
-        Spacer()
-      }
-      .frame(maxWidth: .infinity)
-      .contentShape(RoundedRectangle(cornerRadius: 10))
-      .onTapGesture {
+      MODAButton {
         withAnimation {
-          action()
+          selectedItem = sectionChild
         }
+      } label: {
+        Label(sectionChild.description, systemImage: sectionChild.imageName)
       }
+      .foregroundColor(selectedItem == sectionChild ? Color("AccentLabelColor") : Color("LabelColor"))
+      .padding(12)
+      .background(selectedItem == sectionChild ? Color.accentColor : .white)
+      .cornerRadius(10)
     }
   }
 }
